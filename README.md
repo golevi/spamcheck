@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-    scr := spamcheck.NewRequest("I am a nigerean prince and will give you $1 million")
+    scr := spamcheck.NewRequest("I am a nigerian prince and will give you $1 million")
     scr = spamcheck.Short
 
 	resp, err := scr.CheckScore()
