@@ -8,20 +8,24 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/golevi/spamcheck"
 )
 
+const msg string = `hello i give you money`
+
 func main() {
-    scr := spamcheck.NewRequest("I am a nigerian prince and will give you $1 million")
-    scr = spamcheck.Short
-
-	resp, err := scr.CheckScore()
-	if err != nil {
-		fmt.Println(err)
+	req := &spamcheck.Request{
+		Email:   msg,
+		Options: spamcheck.Long,
+		// Options: spamcheck.Short,
 	}
-    fmt.Println(resp)
 
-    // {true 7.9 [] }
+	resp, err := req.Process()
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(resp)
 }
 ```
