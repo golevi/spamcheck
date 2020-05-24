@@ -17,6 +17,7 @@ package spamcheck
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -52,6 +53,20 @@ type spamRule struct {
 	Description string `json:"description"`
 }
 
+// GetReport returns a long response
+func (r *Request) GetReport() {
+
+}
+
+// GetScore gets only the score
+func (r *Request) GetScore() {
+
+}
+
+func process(email, options string) {
+
+}
+
 // NewRequest is a wrapper for creating a new Request.
 func NewRequest(input string) *Request {
 	spamReq := &Request{
@@ -75,16 +90,31 @@ func (s *Request) CheckScore() (Response, error) {
 		return spamResponse, err
 	}
 
+	postData, err := json.Marshal(map[string]string{
+		"email":   s.Email,
+		"options": string(s.Options),
+	})
+
+	resp, err := http.Post(
+		"https://spamcheck.postmarkapp.com/filter",
+		"application/json",
+		bytes.NewBuffer(postData),
+	)
+	defer resp.Body.Close()
+
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsn))
 	if err != nil {
 		return spamResponse, err
 	}
+	r := &Response{}
+	err = json.NewDecoder(resp.Body).Decode(r)
+	fmt.Println(r.Score)
 
 	req.Header.Add("Accept", "application/json")
 	req.Header.Add("Content-Type", "application/json")
 
 	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err = client.Do(req)
 	if err != nil {
 		return spamResponse, err
 	}
